@@ -1,7 +1,9 @@
+'''This is a program that will enhance the mathematical skills of students, while having an enjoyable experience'''
+#Created by Nishikaa Thakkar
 from tkinter import *
 import random
 import os
-
+from tkinter import simpledialog
 GAME_HEIGHT = 700
 GAME_WIDTH = 700
 SPEED = 150
@@ -28,7 +30,8 @@ class Food:
         x = random.randint(0, (GAME_WIDTH // SPACE_SIZE) - 1) * SPACE_SIZE
         y = random.randint(0, (GAME_HEIGHT // SPACE_SIZE) - 1) * SPACE_SIZE
         self.coordinates = [x, y]
-        canvas.create_oval(x,y, x+SPACE_SIZE, y+SPACE_SIZE, fill=FOOD_COLOUR, tag='food')
+        self.image = PhotoImage(file=os.path.join(os.getcwd(), "Apple.png.png"))  # Load the apple image
+        self.image_id = canvas.create_image(x + SPACE_SIZE // 2, y + SPACE_SIZE // 2, image=self.image, anchor=CENTER, tag='food')
 
 def next_turn(snake, food):
     global score, SPEED
@@ -42,7 +45,7 @@ def next_turn(snake, food):
     elif direction == 'right':
         x += SPACE_SIZE
     snake.coordinates.insert(0,(x,y))
-   
+    
     square = canvas.create_rectangle(x,y,x+SPACE_SIZE,y+SPACE_SIZE,fill=SNAKE_COLOUR)
     snake.squares.insert(0, square)
 
@@ -51,6 +54,7 @@ def next_turn(snake, food):
         label.config(text="Score:{}".format(score))
         canvas.delete("food")
         food = Food()
+        ask_math_question()
 
     else:
         del snake.coordinates[-1]
@@ -80,7 +84,7 @@ def check_collisions(snake):
     x,y = snake.coordinates[0]
     if x<0 or x >= GAME_WIDTH:
         return True
-   
+    
     elif y < 0 or y >= GAME_HEIGHT:
         return True
 
@@ -94,6 +98,25 @@ def game_over():
     canvas.delete(ALL)
     button.config(state="active",bg = "lime")
     canvas.create_text(canvas.winfo_width()/2,canvas.winfo_height()/2,font=("consolas",70),text="GAME OVER",fill="red",tag = "gameover")
+
+def ask_math_question():
+    num1 = random.randint(1, 10)
+    num2 = random.randint(1, 10)
+    operator = random.choice(['+', '-', '*'])
+    question = f"What is {num1} {operator} {num2}?"
+    answer = eval(f"{num1}{operator}{num2}")
+
+    # Prompt the user for an answer
+    user_answer = simpledialog.askinteger("Math Question", question, parent=window)
+
+    # Check the answer
+    if user_answer == answer:
+        # Correct answer
+        return True
+    else:
+        # Incorrect answer
+        game_over()
+        return False
 
 def new_game():
     BODY_PARTS = 3
@@ -112,9 +135,7 @@ def new_game():
 
 window = Tk()
 window.title("Math Snake")
-#window.iconbitmap(r'favicon.ico')
 window.resizable(False, False)
-apple = PhotoImage(file=os.getcwd()+"\Apple.png.png")
 score = 0
 direction = "down"
 label = Label(window,text = "Score:{}".format(score),font=("consolas",40))
