@@ -1,12 +1,14 @@
 '''This is a program that will enhance the mathematical skills of students, while having an enjoyable experience'''
+
 #Created by Nishikaa Thakkar
 #Date: 
 #import time
 from tkinter import *
+import tkinter as tk
 import random
 import os
 from tkinter import simpledialog
-
+from tkinter import messagebox
 
 GAME_HEIGHT = 700
 GAME_WIDTH = 700
@@ -20,49 +22,54 @@ BACKGROUND_COLOUR = "green"
 def rules():
     rule = Toplevel()
     rule.title('RULES')
-    rule.geometry('400x400')
+    rule.config(bg="#a1c5ff")
+    rule.geometry('700x300')
     snake_image = PhotoImage(file='Happy_Snake.png')
-    window2 = Canvas(rule, bg='green')
-    window2.pack(fill="both", expand=True)
-    window2.create_image(0, 0, image=snake_image,anchor="nw")
-    window2.create_text(190, 100, font='consolas 10 bold', text='Welcome to Math Snake\nYou need to eat the apple to grow\nIf any part of the snake touches the boundary or snakes body, the game is over\n\n. After a collision with an apple, you have 10 seconds to answer a simple math question correct to continue\n\n. GOOD LUCK!')
+    rule.iconphoto(True, snake_image)
+##    window2 = Canvas(rule, bg='green')
+##    window2.pack(fill="both", expand=True)
+##    window2.create_image(0, 0, image=snake_image,anchor="nw")
+    label = Label(rule,bg="#a1c5ff", font='consolas 10 ', text='Welcome to Math Snake\nYou need to eat the apple to grow\nIf any part of the snake touches the boundary or snakes body, the game is over\n\n. After a collision with an apple, you have 10 seconds to answer a simple math question correct to continue\n\n. GOOD LUCK!')
+    label.pack()
 def controls():
-    control =Toplevel()
+    control = Toplevel()
     control.title('CONTROLS')
-    control.config(bg="blue")
+    control.config(bg="#a1c5ff")
+    snake_image3 = PhotoImage(file='Happy_Snake.png')
+    control.iconphoto(True, snake_image3)
     control.geometry('500x300')
-    canvas2 = Canvas(control, bg='white')
-    canvas2.pack(fill="both", expand=True)
-    canvas2.create_text(260, 100, font='consolas 10 bold', text=('Welcome to Math Snake\n\n. The navigation keys are up,down,right and bottom keys\n\n Press left alt to pause and unpause\n\nAfter the collison use the numeric keys to answer the math question\n\n'))
+    label = Label(control,font='consolas 10 ',bg="#a1c5ff", text=('Welcome to Math Snake...\n\nUse the arrow keys to navigate.\n\nPress left alt to pause and unpause.\n\nAfter a collision, use the numeric keys to answer the math question.\n\n')).pack()
+    
+    # Add the controls text with proper font settings
+def check_collisions(snake):
+    x,y = snake.coordinates[0]
+    if x<0 or x >= GAME_WIDTH:
+        return True
+    
+    elif y < 0 or y >= GAME_HEIGHT:
+        return True
+
+    for body_part in snake.coordinates[1:]:
+        if x == body_part[0] and y == body_part[1]:
+            return True
+
+def change_direction(new_direction):
+    global direction
+    if new_direction == "left":
+        if new_direction != "right":
+            direction = new_direction
+    elif new_direction == "right":
+        if new_direction != "left":
+            direction = new_direction
+    elif new_direction == "up":
+        if new_direction != "down":
+            direction = new_direction
+    elif new_direction == "down":
+        if new_direction != "up":
+            direction = new_direction
+
+
 def start_game():
-    def check_collisions(snake):
-        x,y = snake.coordinates[0]
-        if x<0 or x >= GAME_WIDTH:
-            return True
-        
-        elif y < 0 or y >= GAME_HEIGHT:
-            return True
-
-        for body_part in snake.coordinates[1:]:
-            if x == body_part[0] and y == body_part[1]:
-                return True
-    def change_direction(new_direction):
-        global direction
-        if new_direction == "left":
-            if direction != "right":
-                direction = new_direction
-        elif new_direction == "right":
-            if direction != "left":
-                direction = new_direction
-        elif new_direction == "up":
-            if direction != "down":
-                direction = new_direction
-        elif new_direction == "down":
-            if direction != "up":
-                direction = new_direction
-
-
-
     class Snake:
         def __init__(self):
             self.body_size = BODY_PARTS
@@ -80,9 +87,8 @@ def start_game():
             x = random.randint(0, (GAME_WIDTH // SPACE_SIZE) - 1) * SPACE_SIZE
             y = random.randint(0, (GAME_HEIGHT // SPACE_SIZE) - 1) * SPACE_SIZE
             self.coordinates = [x, y]
-            apple_food=PhotoImage(file='Apple.png.png')
-            apple_food_id = canvas.create_image(x + SPACE_SIZE // 2, y + SPACE_SIZE // 2, image=apple_food, anchor=CENTER, tag='food')
-
+            self.image = PhotoImage(file=os.path.join(os.getcwd(),"Apple.png.png"))  # Load the apple image
+            self.image_id = canvas.create_image(x + SPACE_SIZE // 2, y + SPACE_SIZE // 2, image=self.image, tag='food')
     def next_turn(snake, food):
         global score, SPEED
         x, y = snake.coordinates[0]
@@ -114,7 +120,6 @@ def start_game():
             game_over()
         else:
             window.after(SPEED,next_turn,snake,food)
-
 
     def game_over():
         canvas.delete(ALL)
@@ -153,12 +158,12 @@ def start_game():
         food = Food()
         next_turn(snake,food)
         button.config(state="disabled",bg="red")
-        window.update()
-
-    window = Tk()
+    window = tk.Tk()
     window.title("Math Snake")
+##    snake_image4 = PhotoImage(file='snake.logo.png')
+    #window.iconphoto(True, snake_image4)
     #window.iconbitmap(r'Apple.png.ico')
-    window.resizable(False, False)
+    #window.resizable(False, False)
     #apple = PhotoImage(file=os.getcwd()+"\Apple.png.png")
     score = 0
     direction = "down"
@@ -169,9 +174,7 @@ def start_game():
     button.pack()
     canvas = Canvas(window, bg = BACKGROUND_COLOUR,height = GAME_HEIGHT,width=GAME_WIDTH)
     canvas.pack()
-
     window.update()
-
     window_width = window.winfo_width()
     window_height = window.winfo_height()
     screen_width = window.winfo_screenwidth()
@@ -195,24 +198,26 @@ def start_game():
 
 home = Tk()
 home.title('Math Snake')
-#home.iconbitmap(r'favicon.ico')
-home.geometry('500x500')
+snake_image5 = PhotoImage(file='Happy_Snake.png')
+home.iconphoto(True, snake_image5)
+home.geometry('600x600')
 background = PhotoImage(file='Happy_Snake.png')
 
-canvas1 = Canvas(home,bg="blue", width=400, height=400)
+canvas1 = Canvas(home,bg="#a1c5ff", width=800, height=800)
 canvas1.pack(fill="both", expand=True)
 canvas1.create_image(0, 0, image=background, anchor="nw")
-startgame_btn = Button(home, text='START GAME', fg='blue', font=('gameplay', 10), command=start_game)
-startgame_btn.place(x=100, y=50)
+startgame_btn = Button(home, text='START GAME', bg="blue", fg="cyan2", font=('gameplay', 10), command=start_game)
+startgame_btn.place(x=50, y=50)
 
-rules_btn = Button(home, text='RULES', fg='blue', font=('gameplay', 10), command=rules)
-rules_btn.place(x=100, y=100)
+rules_btn = Button(home, text='RULES', bg="blue", fg="cyan2", font=('gameplay', 10), command=rules)
+rules_btn.place(x=50, y=100)
 
-controls_btn = Button(home, text='CONTROLS', fg='blue', font=('gameplay', 10), command=controls)
-controls_btn.place(x=100, y=150)
+controls_btn = Button(home, text='CONTROLS', bg="blue", fg="cyan2", font=('gameplay', 10), command=controls)
+controls_btn.place(x=50, y=150)
 
-'''levels_btn = Button(home,text='DIFFICULTY',fg='blue',font=('gameplay',10),command=level)
-levels_btn.place(x=100,y=200)'''
+levels_btn = Button(home,text='DIFFICULTY', bg="blue", fg="cyan2", font=('gameplay',10))
+levels_btn.place(x=50,y=200)
+
 home.bind("<Left>", lambda event: change_direction('left'))
 home.bind("<Right>", lambda event: change_direction('right'))
 home.bind("<Up>", lambda event: change_direction('up'))
@@ -220,6 +225,3 @@ home.bind("<Down>", lambda event: change_direction('down'))
 
 
 home.mainloop()
-
-window.mainloop()
-
