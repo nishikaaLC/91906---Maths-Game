@@ -84,7 +84,7 @@ def controls():
     # Closes the rules window if it's open
         control.destroy()
         control = None
-
+    
 def difficulty():
     # Create a new top-level window for selecting game difficulty
     difficulty = Toplevel()
@@ -92,22 +92,23 @@ def difficulty():
     difficulty.title('Pick Level')
     # Set the background colour of the window 
     difficulty.config(bg="#a1c5ff")
+    difficulty.resizable(False,False)
     # Load and set an image for the window icon
     snake_image3 = PhotoImage(file='Happy_Snake_small.png')
     difficulty.iconphoto(True, snake_image3)
     # Set the dimensions of the window 
-    difficulty.geometry('500x150')
+    difficulty.geometry('500x200')
     # Create a label with instructions
     label = Label(difficulty, font='consolas 10 ', bg="#a1c5ff", text=('Please select a level to start the game'))
     label.pack(pady=10)
     # Create buttons which starts the game at different difficulty levels
-    beginner_btn = Button(difficulty, text='Beginner', bg="blue", fg="cyan2", font=('gameplay', 10), command=start_game,bd=5, highlightbackground='black')
+    beginner_btn = Button(difficulty, text='Beginner', bg="blue", fg="cyan2", font=('gameplay', 10), command=start_game,bd=5, highlightbackground='black',activebackground="darkblue",activeforeground="cyan",relief="raised")
     beginner_btn.pack(anchor='center', padx=10, pady=5)
-    intermediate_btn = Button(difficulty, text='Intermediate', bg="blue", fg="cyan2", font=('gameplay', 10), command=start_game_intermediate,bd=5, highlightbackground='black')
+    intermediate_btn = Button(difficulty, text='Intermediate', bg="blue", fg="cyan2", font=('gameplay', 10), command=start_game_intermediate,bd=5, highlightbackground='black',activebackground="darkblue",activeforeground="cyan",relief="raised")
     intermediate_btn.pack(anchor='center', padx=10, pady=5)
-    advanced_btn = Button(difficulty, text='Advanced', bg="blue", fg="cyan2", font=('gameplay', 10), command=start_game_advanced,bd=5, highlightbackground='black')
+    advanced_btn = Button(difficulty, text='Advanced', bg="blue", fg="cyan2", font=('gameplay', 10), command=start_game_advanced,bd=5, highlightbackground='black',activebackground="darkblue",activeforeground="cyan",relief="raised")
     advanced_btn.pack(anchor='center', padx=10, pady=5)
-    # Set up key bindings so the snake can move with arrow and WASD keys when button clicked 
+    # Set up key bindings so the snake can move with arrow and WASD keys when button clicked
     difficulty.bind("<Left>", lambda event: change_direction('left'))
     difficulty.bind("<Right>", lambda event: change_direction('right'))
     difficulty.bind("<Up>", lambda event: change_direction('up'))
@@ -584,6 +585,7 @@ def start_game():
     score = 0
     window = Toplevel()
     window.title("Math Snake")
+    #window.resizable(False,False)
 
     direction = "down"
     label = Label(window, text="Score: {}".format(score), font=("consolas", 40))
@@ -592,7 +594,7 @@ def start_game():
     paused = False
     button = Button(window, text="New Game", fg='black', font=("consolas", 20), command=new_game, state="disabled", bg='red', activeforeground="black",bd=2, highlightbackground='black')
     button.pack()
-
+    
     canvas = Canvas(window, bg=BACKGROUND_COLOUR, height=GAME_HEIGHT, width=GAME_WIDTH)
     canvas.pack(fill="both", expand=True)
    # small_snake_image = PhotoImage(file='Happy_Snake_small.png')
@@ -625,25 +627,20 @@ snake_image5 = PhotoImage(file='Happy_Snake_medium.png')
 home.iconphoto(True, snake_image5)
 home.geometry('600x450')
 home.resizable(False,False)
-border_frame = Frame(home, bg='white', highlightbackground='green', highlightcolor='green', highlightthickness=100)
+border_frame = Frame(home, bg='white', highlightbackground='blue', highlightcolor='blue', highlightthickness=5)
 border_frame.pack(fill="both", expand=True, padx=5)
-canvas1 = Canvas(home, bg="#a1c5ff", width=800, height=800)
+canvas1 = Canvas(border_frame, bg="#a1c5ff", width=800, height=800)
 canvas1.pack(fill="both", expand=True)
 canvas1.create_image(165, 10, image=snake_image5, anchor="nw")
 math_image = PhotoImage(file='maths_symbols.png')
 canvas1.create_image(25,250, image=math_image, anchor="nw")
-startgame_btn = Button(home, text='START GAME', bg="blue", fg="cyan2", font=('gameplay', 10), command=difficulty, bd=5, highlightbackground='black')
+startgame_btn = Button(home, text='START GAME', bg="blue", fg="cyan2", font=('gameplay', 10), command=difficulty, bd=5, highlightbackground='black',activebackground="darkblue",activeforeground="cyan",relief="raised")
 startgame_btn.place(x=50, y=50)
 welcome = Label(home, font='consolas 15 bold ', bg="#a1c5ff", fg="blue", text=('Welcome to Math Snake!'))
 welcome.place(x=25,y=10)
-rules_btn = Button(home, text='RULES', bg="blue", fg="cyan2", font=('gameplay', 10), command=rules, bd=5, highlightbackground='black')
+rules_btn = Button(home, text='RULES', bg="blue", fg="cyan2", font=('gameplay', 10), command=rules, bd=5, highlightbackground='black',activebackground="darkblue",activeforeground="cyan",relief="raised")
 rules_btn.place(x=50, y=100)
 
-controls_btn = Button(home, text='CONTROLS', bg="blue", fg="cyan2", font=('gameplay', 10), command=controls,bd=5, highlightbackground='black')
+controls_btn = Button(home, text='CONTROLS', bg="blue", fg="cyan2", font=('gameplay', 10), command=controls,bd=5, highlightbackground='black',activebackground="darkblue",activeforeground="cyan",relief="raised")
 controls_btn.place(x=50, y=150)
 home.mainloop()
-
-
-
-
-
