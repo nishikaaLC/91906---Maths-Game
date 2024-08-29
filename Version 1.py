@@ -11,7 +11,7 @@ from tkinter import messagebox, font
 # The initial direction of the snake 
 DIRECTION = 'down'
 # Height of the game window in pixels
-GAME_HEIGHT = 500
+GAME_HEIGHT = 600
 # Width of the game window in pixels 
 GAME_WIDTH = 700
 # Speed of the snake in milliseconds
@@ -44,7 +44,7 @@ def rules():
         #Set the icon of the window
         rules_window.iconphoto(True, snake_image)
         # Create a Text widget to display the rules
-        text_widget = Text(rules_window, wrap='word', bg="#a1c5ff", font='times 10', fg="black", padx=10, pady=10)
+        text_widget = Text(rules_window, wrap='word', bg="#a1c5ff", font='times 12', fg="black", padx=10, pady=10)
         text_widget.pack(expand=True, fill='both')
 
         # Insert the rules text into the Text widget
@@ -54,11 +54,11 @@ def rules():
             '-If any part of your snake touches the wall or its own body, the game is over.\n\n'
             '-After eating an apple, your score will increase; however, you have to answer a simple math question correctly to continue.\n\n'
             '-Once your score reaches 20, you win!'
-            '-Once you click on START LEVEL, you will be required to select a level\n\n'
+            '-Once you click on START LEVEL, you will be required to select a difficulty level\n\n'
             'GOOD LUCK!'
         ))
                         # Create a tag for bold and larger font
-        bold_font = font.Font(weight='bold', size=14, font='times')  # Adjust size as needed
+        bold_font = font.Font(weight='bold', size=20, font='times')  # Adjust size as needed
         text_widget.tag_configure('bold_large', font=bold_font)
 
         # Apply the tag to the first line
@@ -98,9 +98,10 @@ def controls():
             '-Press left alt to pause and unpause.\n\n'
             '-After a collision, use the numeric keys to answer the math question.\n\n'
             '-Click Submit, or Enter to reveal if your answer was correct.'
+            '-Press x on the top right corner to go back to the main window'
         ))
                 # Create a tag for bold and larger font
-        bold_font = font.Font(weight='bold', size=14, font='consolas')  # Adjust size as needed
+        bold_font = font.Font(weight='bold', size=14, font='Times')  # Adjust size as needed
         text_widget.tag_configure('bold_large', font=bold_font)
 
         # Apply the tag to the first line
@@ -301,7 +302,6 @@ def start_game_intermediate():
                 home.withdraw()
                 level.destroy()
                 messagebox.showerror("Error", "Answer cannot be more than 5 digits.")
-                top.lower()
 
             # Check if the converted answer matches the expected answer
             if user_answer_int == answer:
@@ -324,6 +324,7 @@ def start_game_intermediate():
         top = tk.Toplevel(window)
         top.title("Math Question")
         top.config(bg="#a1c5ff")
+        top.resizable(False,False)
 
         # Calculate the position to center the Toplevel window
         window_width = window.winfo_width()
@@ -399,6 +400,7 @@ def start_game_intermediate():
     score = 0
     window = Toplevel()
     window.title("Snake Game")
+    window.resizable(False,False)
     window.lift()
     direction = "down"
     label = Label(window, text="Score: {}".format(score), font=("times", 40), fg='RoyalBlue3')
@@ -475,10 +477,9 @@ def start_game_advanced():
             canvas.delete(snake.squares.pop())
         canvas.delete(ALL)
         button.config(state="active", bg="lime")
-        canvas.create_text(canvas.winfo_width()/2, canvas.winfo_height()/2, font=("consolas", 70), text="YOU WIN!", fill="lime", tag="gamewin")
+        canvas.create_text(canvas.winfo_width()/2, canvas.winfo_height()/2, font=("Times", 70), text="YOU WIN!", fill="lime", tag="gamewin")
         with open('Score.txt', 'w') as f:
-            f.write(f"Hello!")
-            f.write(f"Congratulations! You've won the game!\n")
+            f.write(f"Congratulations! You've won the game!\n\n")
             f.write(f"Final Score: {score}\n")
         disable_key_bindings(window)
         level.destroy()
@@ -492,7 +493,7 @@ def start_game_advanced():
             canvas.delete(snake.squares.pop())
         canvas.delete(ALL)
         button.config(state="active", bg="lime")
-        canvas.create_text(canvas.winfo_width()/2, canvas.winfo_height()/2, font=("consolas", 70), text="GAME OVER", fill="red", tag="gameover")
+        canvas.create_text(canvas.winfo_width()/2, canvas.winfo_height()/2, font=("Times", 70), text="GAME OVER", fill="red", tag="gameover")
         with open ('Score.txt', 'w') as f:
             f.write(f" Hello!\n")
             f.write(f" Below is your final score for the last round you played:\n")
@@ -551,7 +552,6 @@ def start_game_advanced():
                     home.withdraw()
                     level.destroy()
                     messagebox.showerror("Error", "Answer cannot be more than 5 digits.")
-                    top.lower()
                     return
 
                 # Check if the converted answer matches the expected answer
@@ -575,6 +575,7 @@ def start_game_advanced():
             # Create the Toplevel window
             top = tk.Toplevel(window)
             top.title("Math Question")
+            top.resizable(False,False)
             top.config(bg="#a1c5ff")
 
             # Calculate the position to center the Toplevel window
@@ -651,6 +652,7 @@ def start_game_advanced():
     score = 0
     window = Toplevel()
     window.title("Snake Game")
+    window.resizable(False,False)
     window.lift()
     direction = "down"
     label = Label(window, text="Score: {}".format(score), font=("times", 40), fg='RoyalBLue3')
@@ -737,7 +739,6 @@ def start_game():
         home.attributes('-topmost', False)  # Ensure home window is not on top
         home.lower()  # Send home window to the back
 
-
     def game_over():
             # Deleting all snake parts
         while snake.squares:
@@ -787,7 +788,6 @@ def start_game():
                 home.withdraw()
                 level.destroy()
                 messagebox.showerror("Error", "Answer cannot be more than 5 digits.")
-                top.lower()
                 return
 
             # Check if the converted answer matches the expected answer
@@ -810,6 +810,7 @@ def start_game():
         # Create the Toplevel window
         top = tk.Toplevel(window)
         top.title("Math Question")
+        top.resizable(False,False)
         top.config(bg="#a1c5ff")
         # Calculate the position to center the Toplevel window
         window_width = window.winfo_width()
@@ -886,6 +887,7 @@ def start_game():
     score = 0
     window = Toplevel()
     window.title("Snake Game")
+    window.resizable(False,False)
     window.lift()
     #window.resizable(False,False)             
 
@@ -894,7 +896,7 @@ def start_game():
     label.pack()
 
     paused = False
-    button = Button(window, text="New Game", fg='black', font=("gameplay", 20), command=new_game, state="disabled", bg='red', activeforeground="black",bd=5, highlightbackground='black',relief='ridge')
+    button = Button(window, text="New Game", fg='black', font=("times", 20), command=new_game, state="disabled", bg='red', activeforeground="black",bd=5, highlightbackground='black',relief='ridge')
     button.pack()
     
     canvas = Canvas(window, bg=BACKGROUND_COLOUR, height=GAME_HEIGHT, width=GAME_WIDTH)
