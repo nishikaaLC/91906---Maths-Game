@@ -11,7 +11,7 @@ from tkinter import messagebox, font
 # The initial direction of the snake 
 DIRECTION = 'down'
 # Height of the game window in pixels
-GAME_HEIGHT = 600
+GAME_HEIGHT = 500
 # Width of the game window in pixels 
 GAME_WIDTH = 700
 # Speed of the snake in milliseconds
@@ -44,7 +44,7 @@ def rules():
         #Set the icon of the window
         rules_window.iconphoto(True, snake_image)
         # Create a Text widget to display the rules
-        text_widget = Text(rules_window, wrap='word', bg="#a1c5ff", font='times 12', fg="black", padx=10, pady=10)
+        text_widget = Text(rules_window, wrap='word', bg="#a1c5ff", font='times 10', fg="black", padx=10, pady=10)
         text_widget.pack(expand=True, fill='both')
 
         # Insert the rules text into the Text widget
@@ -53,12 +53,12 @@ def rules():
             '-You need to eat the apples to grow.\n\n'
             '-If any part of your snake touches the wall or its own body, the game is over.\n\n'
             '-After eating an apple, your score will increase; however, you have to answer a simple math question correctly to continue.\n\n'
-            '-Once your score reaches 20, you win!'
-            '-Once you click on START LEVEL, you will be required to select a difficulty level\n\n'
+            '-Once your score reaches 15, you win!'
+            '-Once you click on START LEVEL, you will be required to select the level of difficulty\n\n'
             'GOOD LUCK!'
         ))
                         # Create a tag for bold and larger font
-        bold_font = font.Font(weight='bold', size=20, font='times')  # Adjust size as needed
+        bold_font = font.Font(weight='bold', size=14, font='times')  # Adjust size as needed
         text_widget.tag_configure('bold_large', font=bold_font)
 
         # Apply the tag to the first line
@@ -98,10 +98,10 @@ def controls():
             '-Press left alt to pause and unpause.\n\n'
             '-After a collision, use the numeric keys to answer the math question.\n\n'
             '-Click Submit, or Enter to reveal if your answer was correct.'
-            '-Press x on the top right corner to go back to the main window'
+            '-Click x on the windows to go to the main window, where you will be able to change the difficulty'
         ))
                 # Create a tag for bold and larger font
-        bold_font = font.Font(weight='bold', size=14, font='Times')  # Adjust size as needed
+        bold_font = font.Font(weight='bold', size=14, font='times')  # Adjust size as needed
         text_widget.tag_configure('bold_large', font=bold_font)
 
         # Apply the tag to the first line
@@ -210,41 +210,54 @@ def start_game_intermediate():
             button.config(state="disabled", bg="red")
             window.after(SPEED, next_turn, snake, food)
     def game_win():
-        # Deleting all snake parts
+        # Delete all parts of the snake
         while snake.squares:
             canvas.delete(snake.squares.pop())
         canvas.delete(ALL)
+        # Enable the new game button
         button.config(state="active", bg="lime")
         canvas.create_text(canvas.winfo_width()/2, canvas.winfo_height()/2, font=("times", 70), text="YOU WIN!", fill="lime", tag="gamewin")
+        # Save score to a text file
         with open('Score.txt', 'w') as f:
             f.write(f"Hello!")
             f.write(f"Congratulations! You've won the game!\n")
             f.write(f"Final Score: {score}\n")
+        # Disable all the keys so that snake cannot move 
         disable_key_bindings(window)
         level.destroy()
-        window.lift()  # Bring the snake game window to the front    
-        home.deiconify()  # Show the home window
-        home.attributes('-topmost', False)  # Ensure home window is not on top
-        home.lower()  # Send home window to the back
+        # Bring the snake game window to the front
+        window.lift()
+        # Show the home window
+        home.deiconify()
+        # Ensure home window is not on top
+        home.attributes('-topmost', False)
+        # Send home window to the back
+        home.lower()  
     def game_over():
-            # Deleting all snake parts
+        # Delete all parts of the snake
         while snake.squares:
             canvas.delete(snake.squares.pop())
         canvas.delete(ALL)
+        # Enable the new game button
         button.config(state="active", bg="lime")
         canvas.create_text(canvas.winfo_width()/2, canvas.winfo_height()/2, font=("times", 70), text="GAME OVER!", fill="red", tag="gameover")
-        #Write score to a data file once snake dies
+        # Write final score to a data file
         with open ('Score.txt', 'w') as f:
             f.write(f"Hello!")
             f.write(f" Below is your final score for the last round you played:\n")
             f.write(f"        \n")
             f.write(f" Final Score: {score}\n")
+        # Disable all the keys so snake cannot move 
         disable_key_bindings(window)
         level.destroy()
-        window.lift()  # Bring the snake game window to the front    
-        home.deiconify()  # Show the home window
-        home.attributes('-topmost', False)  # Ensure home window is not on top
-        home.lower()  # Send home window to the back
+        # Bring the snake game window to the front
+        window.lift()
+        # Show the home window
+        home.deiconify
+        # Ensure home window is not on top
+        home.attributes('-topmost', False)
+        # Send home window to the back
+        home.lower()  
 
     # Function to map numbers to their Unicode superscripts
     def to_superscript(n):
@@ -265,9 +278,9 @@ def start_game_intermediate():
         # Randomly select an exponent problem
         problem = random.choice(exponent_problems)
         
-        # Generate random base and exponent
-        num1 = random.randint(2, 10)  # base between 2 and 10
-        num2 = random.randint(1, 3)   # exponent between 1 and 3
+        # Generate random base and exponent between a certain range 
+        num1 = random.randint(2, 10)  
+        num2 = random.randint(1, 3)   
 
         # Format the question with the generated numbers and superscript for the exponent
         superscript_exponent = to_superscript(num2)
@@ -285,48 +298,61 @@ def start_game_intermediate():
             if not user_answer:
                 home.withdraw()
                 level.destroy()
+                top.grab_set()
+                # Print error message if input if blank
                 messagebox.showerror("Error", "Answer cannot be blank.")
                 return
 
-            # Attempt to convert the input to an integer
+            # Convert the input to an integer
             try:
                 user_answer_int = int(user_answer)
             except ValueError:
                 home.withdraw()
                 level.destroy()
-                messagebox.showerror("Error", "Please enter a valid numeric value.\n No letters or symbols.")
+                top.grab_set()
+                # Print an error message if input is not an integer
+                messagebox.showerror("Error", "Please enter a valid integer.\n No letters or symbols.")
                 return
 
             # Check if the answer exceeds the maximum allowed value
             if not (user_answer_int <= 99999):
                 home.withdraw()
                 level.destroy()
+                top.grab_set()
+                # Print an error message if input is more than 5 digits
                 messagebox.showerror("Error", "Answer cannot be more than 5 digits.")
+                top.lower()
 
-            # Check if the converted answer matches the expected answer
+            # Check if the inputed answer matches the expected answer
             if user_answer_int == answer:
                 top.destroy()
                 home.withdraw()
                 level.destroy()
             else:
+                top.grab_set()
+                # Print error message if answer is wrong and end the game
                 messagebox.showerror("Wrong", f"Answer was {answer}! Game Over.")
                 game_over()
                 top.destroy()
-                window.lift()  # Bring the snake game window to the front
-                home.deiconify()  # Show the home window
-                home.attributes('-topmost', False)  # Ensure home window is not on top
-                home.lower()  # Send home window to the back
+                # Bring the snake game window to the front
+                window.lift()
+                # Show the home window
+                home.deiconify()
+                # Ensure home window is not on top
+                home.attributes('-topmost', False)
+                # Send home window to the back
+                home.lower()  
         def on_close(event=None):
             top.destroy()
             game_over()
 
-        # Create the Toplevel window
+        # Create the window asking for answer of Math Question
         top = tk.Toplevel(window)
         top.title("Math Question")
+        # Set the windows background colour
         top.config(bg="#a1c5ff")
-        top.resizable(False,False)
 
-        # Calculate the position to center the Toplevel window
+        # Calculate the position to center the window
         window_width = window.winfo_width()
         window_height = window.winfo_height()
         top_width = 400
@@ -338,17 +364,18 @@ def start_game_intermediate():
         top.geometry(f"{top_width}x{top_height}+{x}+{y}")
 
 
-        # Create widgets for the Toplevel window
+        # Ask the math question on the window
         tk.Label(top, text=question, font=("times", 14), bg="#a1c5ff").pack(pady=10)
-
+        # Create an entry box where the user can enter their answer
         entry = tk.Entry(top, font=("times", 14))
         entry.pack(pady=10)
         entry.focus_set()
 
         entry.bind('<Return>', on_answer)
-
+        # Create a submit button for player to submit their math answer
         tk.Button(top, text="Submit", font=("gameplay", 10),bg='blue',fg='cyan2',bd=6, highlightbackground='black',activebackground="darkblue",activeforeground="cyan",relief="ridge", command=on_answer).pack(side=tk.RIGHT, padx=20, pady=10)
-        tk.Button(top, text="Cancel", font=("gameplay", 10),bg='blue',fg='cyan2',bd=6, highlightbackground='black',activebackground="darkblue",activeforeground="cyan",relief="ridge", command=lambda: (top.destroy(), game_over())).pack(side=tk.LEFT, padx=20, pady=10)
+        # Create a cancel button if user wants to quit
+        tk.Button(top, text="Quit", font=("gameplay", 10),bg='blue',fg='cyan2',bd=6, highlightbackground='black',activebackground="darkblue",activeforeground="cyan",relief="ridge", command=lambda: (top.destroy(), game_over())).pack(side=tk.LEFT, padx=20, pady=10)
         top.protocol("WM_DELETE_WINDOW", on_close)
         # Wait for the math question window to close
         top.wait_window()
@@ -444,17 +471,21 @@ def start_game_advanced():
             x -= SPACE_SIZE
         elif direction == 'right':
             x += SPACE_SIZE
+        # Insert a new position for the snake head 
         snake.coordinates.insert(0, (x, y))
         # Create a new segment for the snake
         square = canvas.create_rectangle(x, y, x + SPACE_SIZE, y + SPACE_SIZE, fill=SNAKE_COLOUR)
         snake.squares.insert(0, square)
-
+        # Check if the snake has eaten the food
         if x == food.coordinates[0] and y == food.coordinates[1]:
             score += 1
             if label:
                 label.config(text="Score: {}".format(score))
+            # Remove the old food and create new food 
             canvas.delete("food")
-            food = Food()  # Create new food with a new position and image
+            # Create new food with a new position
+            food = Food()
+            # Ask user a math question to proceed 
             ask_math_question()
             # Check for win condition
             if score >= 15:
@@ -464,7 +495,7 @@ def start_game_advanced():
             del snake.coordinates[-1]
             canvas.delete(snake.squares[-1])
             del snake.squares[-1]
-
+        # End the game if snake collides with itself 
         if check_collisions(snake):
             game_over()
         else:
@@ -472,61 +503,79 @@ def start_game_advanced():
             button.config(state="disabled", bg="red")
             window.after(SPEED, next_turn, snake, food)
     def game_win():
-        # Deleting all snake parts
+        # Delete all parts of the snake
         while snake.squares:
             canvas.delete(snake.squares.pop())
         canvas.delete(ALL)
+        # Enable the new game button
         button.config(state="active", bg="lime")
-        canvas.create_text(canvas.winfo_width()/2, canvas.winfo_height()/2, font=("Times", 70), text="YOU WIN!", fill="lime", tag="gamewin")
+        canvas.create_text(canvas.winfo_width()/2, canvas.winfo_height()/2, font=("times", 70), text="YOU WIN!", fill="lime", tag="gamewin")
+        # Save score to a text file
         with open('Score.txt', 'w') as f:
-            f.write(f"Congratulations! You've won the game!\n\n")
+            f.write(f"Hello!")
+            f.write(f"Congratulations! You've won the game!\n")
             f.write(f"Final Score: {score}\n")
+        # Disable all the keys so that snake cannot move 
         disable_key_bindings(window)
         level.destroy()
-        window.lift()  # Bring the snake game window to the front    
-        home.deiconify()  # Show the home window
-        home.attributes('-topmost', False)  # Ensure home window is not on top
-        home.lower()  # Send home window to the back
+        # Bring the snake game window to the front
+        window.lift()
+        # Show the home window
+        home.deiconify()
+        # Ensure home window is not on top
+        home.attributes('-topmost', False)
+        # Send home window to the back
+        home.lower()  
     def game_over():
-            # Deleting all snake parts
+        # Delete all parts of the snake
         while snake.squares:
             canvas.delete(snake.squares.pop())
         canvas.delete(ALL)
+        # Enable the new game button
         button.config(state="active", bg="lime")
-        canvas.create_text(canvas.winfo_width()/2, canvas.winfo_height()/2, font=("Times", 70), text="GAME OVER", fill="red", tag="gameover")
+        canvas.create_text(canvas.winfo_width()/2, canvas.winfo_height()/2, font=("times", 70), text="GAME OVER!", fill="red", tag="gameover")
+        # Write final score to a data file
         with open ('Score.txt', 'w') as f:
-            f.write(f" Hello!\n")
+            f.write(f"Hello!")
             f.write(f" Below is your final score for the last round you played:\n")
             f.write(f"        \n")
             f.write(f" Final Score: {score}\n")
+        # Disable all the keys so snake cannot move 
         disable_key_bindings(window)
         level.destroy()
-        window.lift()  # Bring the snake game window to the front    
-        home.deiconify()  # Show the home window
-        home.attributes('-topmost', False)  # Ensure home window is not on top
-        home.lower()  # Send home window to the back
+        # Bring the snake game window to the front
+        window.lift()
+        # Show the home window
+        home.deiconify
+        # Ensure home window is not on top
+        home.attributes('-topmost', False)
+        # Send home window to the back
+        home.lower() 
 
     def ask_math_question():
         def generate_linear_equation():
-            """Generates a simple linear algebra problem with an integer solution."""
-            a = random.randint(1, 10)  # Coefficient of x
-            b = random.randint(-10, 10)  # Constant term
+            #Generates a simple linear algebra problem with an integer solution.
+            a = random.randint(1, 10)  
+            b = random.randint(-10, 10)  
 
             # Ensure the solution is an integer
-            x = random.randint(-10, 10)  # Random integer solution for x
-            c = a * x + b  # Calculate c to ensure that x is a solution
+            x = random.randint(-10, 10)
+            # Calculate c to ensure that x is a solution
+            c = a * x + b  
 
             # Create the equation in the form ax + b = c
             equation = f"{a}x + {b} = {c}"
-            solution = x  # Solution to the equation
+            solution = x
 
             return equation, solution
 
         def ask_linear_question():
             equation, solution = generate_linear_equation()
+            # Generate the algebra question
             question = f"Solve for x: {equation}"
             global answer
-            answer = solution  # Set the correct answer
+            # Set the correct answer
+            answer = solution  
                 
             def on_answer(event=None):
                 user_answer = entry.get().strip()
@@ -535,6 +584,8 @@ def start_game_advanced():
                 if not user_answer:
                     home.withdraw()
                     level.destroy()
+                    top.grab_set()
+                    # Print an error message if the input is blank
                     tk.messagebox.showerror("Error", "Answer cannot be blank.")
                     return
 
@@ -544,41 +595,52 @@ def start_game_advanced():
                 except ValueError:
                     home.withdraw()
                     level.destroy()
-                    messagebox.showerror("Error", "Please enter a valid numeric value.\n No letters or symbols.")
+                    top.grab_set()
+                    # Print an error message if the input is not an integer
+                    messagebox.showerror("Error", "Please enter a valid integer.\n No letters or symbols.")
                     return
 
                 # Check if the answer exceeds the maximum allowed value
                 if not (user_answer_int <= 99999):
                     home.withdraw()
                     level.destroy()
+                    top.grab_set()
+                    # Print an error message if input is more than 5 digits
                     messagebox.showerror("Error", "Answer cannot be more than 5 digits.")
+                    top.lower()
                     return
 
-                # Check if the converted answer matches the expected answer
+                # Check if the input answer matches the expected answer
                 if user_answer_int == answer:
-                    top.destroy()# Close the math question window
+                    top.destroy()
                     home.withdraw()
                     level.destroy()
                 else:
+                    top.grab_set()
+                    # Print an error message if users input was incorrect 
                     messagebox.showerror("Wrong", f"Answer was {answer}! Game Over.")
                     game_over()
                     top.destroy()
-                    window.lift()  # Bring the snake game window to the front
-                    home.deiconify()  # Show the home window
-                    home.attributes('-topmost', False)  # Ensure home window is not on top
-                    home.lower()  # Send home window to the back
-
+                    # Bring the snake game window to the front
+                    window.lift()
+                    # Show the home window
+                    home.deiconify()
+                    # Ensure home window is not on top
+                    home.attributes('-topmost', False)
+                    # Send home window to the back
+                    home.lower()  
             def on_close(event=None):
                 top.destroy()
                 game_over()
 
-            # Create the Toplevel window
+            # Create the Math Quesiton window
             top = tk.Toplevel(window)
             top.title("Math Question")
+            # Ensure window is not resizable
             top.resizable(False,False)
             top.config(bg="#a1c5ff")
 
-            # Calculate the position to center the Toplevel window
+            # Calculate the position to center the Math Questin window
             window_width = window.winfo_width()
             window_height = window.winfo_height()
             top_width = 400
@@ -589,16 +651,18 @@ def start_game_advanced():
 
             top.geometry(f"{top_width}x{top_height}+{x}+{y}")
 
-            # Create widgets for the Toplevel window
+            # Create a label for the question on the window asking the maths question
             tk.Label(top, text=question, font=("times", 14), bg="#a1c5ff").pack(pady=10)
-
+            # Create an entry box for the players input
             entry = tk.Entry(top, font=("times", 14))
             entry.pack(pady=10)
             entry.focus_set()
-
+            # Allow for user to click enter key instead of submit button
             entry.bind('<Return>', on_answer)
+            # Create a button for user to click and submit their answer
             tk.Button(top, text="Submit", font=("gameplay", 10),bg='blue',fg='cyan2',bd=6, highlightbackground='black',activebackground="darkblue",activeforeground="cyan",relief="ridge", command=on_answer).pack(side=tk.RIGHT, padx=20, pady=10)
-            tk.Button(top, text="Cancel", font=("gameplay", 10),bg='blue',fg='cyan2',bd=6, highlightbackground='black',activebackground="darkblue",activeforeground="cyan",relief="ridge", command=lambda: (top.destroy(), game_over())).pack(side=tk.LEFT, padx=20, pady=10)
+            # Create a button for users to cancel if they want to quit the gam
+            tk.Button(top, text="Quit", font=("gameplay", 10),bg='blue',fg='cyan2',bd=6, highlightbackground='black',activebackground="darkblue",activeforeground="cyan",relief="ridge", command=lambda: (top.destroy(), game_over())).pack(side=tk.LEFT, padx=20, pady=10)
             top.protocol("WM_DELETE_WINDOW", on_close)
 
             # Wait for the math question window to close
@@ -681,11 +745,14 @@ def start_game_advanced():
     food = Food()
 
     next_turn(snake, food)
+# Create a function for when easy is clicked as difficulty
 def start_game():
     global home, level, window
+    # This function will handle the next turn of the snake 
     def next_turn(snake, food):
         global score, SPEED
         x, y = snake.coordinates[0]
+        # Update the snake's position based on its current direction
         if direction == 'up':
             y -= SPACE_SIZE
         elif direction == 'down':
@@ -694,17 +761,21 @@ def start_game():
             x -= SPACE_SIZE
         elif direction == 'right':
             x += SPACE_SIZE
+        # Insert a new position for the snake head 
         snake.coordinates.insert(0, (x, y))
-
+        # Create a new segment for the snake
         square = canvas.create_rectangle(x, y, x + SPACE_SIZE, y + SPACE_SIZE, fill=SNAKE_COLOUR)
         snake.squares.insert(0, square)
-
+        # Check if the snake has eaten the food
         if x == food.coordinates[0] and y == food.coordinates[1]:
             score += 1
             if label:
                 label.config(text="Score: {}".format(score))
+            # Remove the old food and create new food 
             canvas.delete("food")
-            food = Food()  # Create new food with a new position and image
+            # Create new food with a new position
+            food = Food()
+            # Ask user a math question to proceed 
             ask_math_question()
             # Check for win condition
             if score >= 15:
@@ -714,7 +785,7 @@ def start_game():
             del snake.coordinates[-1]
             canvas.delete(snake.squares[-1])
             del snake.squares[-1]
-      
+        # End the game if snake collides with itself 
         if check_collisions(snake):
             game_over()
         else:
@@ -722,41 +793,56 @@ def start_game():
             button.config(state="disabled", bg="red")
             window.after(SPEED, next_turn, snake, food)
     def game_win():
-        # Deleting all snake parts
+        # Delete all snake parts when they win & clear the canvas
         while snake.squares:
             canvas.delete(snake.squares.pop())
         canvas.delete(ALL)
+        # Enable the new game button 
         button.config(state="active", bg="lime")
         canvas.create_text(canvas.winfo_width()/2, canvas.winfo_height()/2, font=("times", 70), text="YOU WIN!", fill="lime", tag="gamewin")
+        # Write the final score to a text file 
         with open('Score.txt', 'w') as f:
             f.write(f"Hello!")
             f.write(f"Congratulations! You've won the game!\n")
             f.write(f"Final Score: {score}\n")
+        # Disable keys so snake cannot move when game is over
         disable_key_bindings(window)
         level.destroy()
-        window.lift()  # Bring the snake game window to the front    
-        home.deiconify()  # Show the home window
-        home.attributes('-topmost', False)  # Ensure home window is not on top
-        home.lower()  # Send home window to the back
+        # Bring the snake game window to the front
+        window.lift()
+        # Show the home window
+        home.deiconify()
+        # Ensure home window is not on top
+        home.attributes('-topmost', False)
+        # Send home window to the back
+        home.lower()  
+
 
     def game_over():
-            # Deleting all snake parts
+        # Delete all snake parts & clear the canvas
         while snake.squares:
             canvas.delete(snake.squares.pop())
         canvas.delete(ALL)
+        # Enable the new game button 
         button.config(state="active", bg="lime")
         canvas.create_text(canvas.winfo_width()/2, canvas.winfo_height()/2, font=("times", 70), text="GAME OVER", fill="red", tag="gameover")
+        # Write the final score to a text file
         with open ('Score.txt', 'w') as f:
             f.write(f" Hello!")
             f.write(f" Below is your final score for the last round you played:\n")
             f.write(f"        \n")
             f.write(f" Final Score: {score}\n")
+        #Disable keys so snake cannot move when game is over
         disable_key_bindings(window)
         level.destroy()
-        window.lift()  # Bring the snake game window to the front    
-        home.deiconify()  # Show the home window
-        home.attributes('-topmost', False)  # Ensure home window is not on top
-        home.lower()  # Send home window to the back
+        # Bring the snake game window to the front 
+        window.lift()
+        # Show the home window
+        home.deiconify()
+        # Ensure home window is not on top
+        home.attributes('-topmost', False)
+        # Ensure home window is not on top
+        home.lower()  
 
     def ask_math_question():
         num1 = random.randint(1, 10)
@@ -767,27 +853,33 @@ def start_game():
 
         def on_answer(event=None):
             user_answer = entry.get().strip()
-            # Check if the input is blank
+            # Check if the input is blank, and print an error message
             if not user_answer:
                 home.withdraw()
                 level.destroy()
+                top.grab_set()
                 tk.messagebox.showerror("Error", "Answer cannot be blank.")
                 return
 
-            # Attempt to convert the input to an integer
+            # Convert the input to an integer
             try:
                 user_answer_int = int(user_answer)
+            # Print an error message if the input is not an integer
             except ValueError:
                 home.withdraw()
                 level.destroy()
-                messagebox.showerror("Error", "Please enter a valid numeric value.\n No letters or symbols.")
+                top.grab_set()
+                messagebox.showerror("Error", "Please enter a valid integer.\n No letters or symbols.")
                 return
 
             # Check if the answer exceeds the maximum allowed value
             if not (user_answer_int <= 99999):
                 home.withdraw()
                 level.destroy()
+                top.grab_set()
+            # Print an error message if input is more than 5 digits
                 messagebox.showerror("Error", "Answer cannot be more than 5 digits.")
+                top.lower()
                 return
 
             # Check if the converted answer matches the expected answer
@@ -796,21 +888,22 @@ def start_game():
                 home.withdraw()
                 level.destroy()
             else:
+                top.grab_set()
+                # Print an error message if the Answer was wrong 
                 messagebox.showerror("Wrong", f"Answer was {answer}! Game Over.")
                 game_over()
                 top.destroy()
-                window.lift()  # Bring the snake game window to the front
-                home.attributes('-topmost', False)  # Ensure home window is not on top
-                home.deiconify()  # Show the home window
-                home.lower()  # Send home window to the back
+                window.lift()  
+                home.attributes('-topmost', False)  
+                home.deiconify()  
+                home.lower()  
         def on_close(event=None):
             top.destroy()
             game_over()
       
-        # Create the Toplevel window
+        # Create the Math Question window
         top = tk.Toplevel(window)
         top.title("Math Question")
-        top.resizable(False,False)
         top.config(bg="#a1c5ff")
         # Calculate the position to center the Toplevel window
         window_width = window.winfo_width()
@@ -829,85 +922,101 @@ def start_game():
         entry = tk.Entry(top, font=("times", 14))
         entry.pack(pady=10)
         entry.focus_set()
-
+        # Allow user to click enter key instead of submit button
         entry.bind('<Return>', on_answer)
-
+        # Create a submit button for the user to submit their answers
         tk.Button(top, text="Submit", font=("gameplay", 10),bg='blue',fg='cyan2',bd=6, highlightbackground='black',activebackground="darkblue",activeforeground="cyan",relief="ridge", command=on_answer).pack(side=tk.RIGHT, padx=20, pady=10)
-        tk.Button(top, text="Cancel", font=("gameplay", 10),bg='blue',fg='cyan2',bd=6, highlightbackground='black',activebackground="darkblue",activeforeground="cyan",relief="ridge",command=lambda: (top.destroy(), game_over())).pack(side=tk.LEFT, padx=20, pady=10)
+        tk.Button(top, text="Quit", font=("gameplay", 10),bg='blue',fg='cyan2',bd=6, highlightbackground='black',activebackground="darkblue",activeforeground="cyan",relief="ridge",command=lambda: (top.destroy(), game_over())).pack(side=tk.LEFT, padx=20, pady=10)
         top.protocol("WM_DELETE_WINDOW", on_close)
 
-        # Be able to click submit with enter 
-        # Wait for the math question window to close
-        # Wait for the math question window to close
         top.wait_window()
 
 
     class Snake:
         def __init__(self):
+            # Initialize the size of the snake's body
             self.body_size = BODY_PARTS
+            # List to keep track of the snake's coordinates
             self.coordinates = []
+            # List to keep track of the snake's graphical squares
             self.squares = []
+            # Initialize the snake with BODY_PARTS segments
             for i in range(BODY_PARTS):
+                # Add each segment at the starting position
                 self.coordinates.append([0, 0])
+            # Create rectangles on the canvas to represent each segment of the snake
             for x, y in self.coordinates:
                 square = canvas.create_rectangle(x, y, x + SPACE_SIZE, y + SPACE_SIZE, fill=SNAKE_COLOUR, tag="snake")
+                # Add each rectangle to the list of snake squares
                 self.squares.append(square)
 
     class Food:
         def __init__(self):
+            # Load the image of an apple 
             self.image = PhotoImage(file='Apple.png.png')
+            # Randomly place the food on the canvas within the game boundaries
             x = random.randint(0, (GAME_WIDTH // SPACE_SIZE) - 1) * SPACE_SIZE
             y = random.randint(0, (GAME_HEIGHT // SPACE_SIZE) - 1) * SPACE_SIZE
+#           # Set the food coordinates
             self.coordinates = [x, y]
+            # Place the image of the apple on the canvas
             canvas.create_image(x + SPACE_SIZE // 2, y + SPACE_SIZE // 2, image=self.image, anchor='center', tag='food')
     def new_game():
         global score, squares, coordinates, direction, label, button, canvas
-
+        # Initial size of the snake
         BODY_PARTS = 3
+        # Intital direction of the snake
         direction = "down"
+        # List to keep track of the snake's squares
         squares = []
+        # Initialise the score
         score = 0
+        # List to keep track of the snakes coordinates
         coordinates = []
-
+        # Update score display
         if label:
             label.config(text="Score: {}".format(score))
         
         canvas.delete(ALL)
         label.config(text="Score: {}".format(score))
-        
+        # Start the game loop
         snake = Snake()
         food = Food()
         window.lift()
         next_turn(snake, food)
-        
+        # Disable the new game button while the game is running
         button.config(state="disabled", bg="red")
-        enable_key_bindings(window)    
+        # Enable the key bindings for while the game is running
+        enable_key_bindings(window)
+        
     global score, label, button, canvas, direction, window
-
+    # Initialise score
     score = 0
+    # Create a new window called Snake Game
     window = Toplevel()
     window.title("Snake Game")
+    # Make the window non-resizable
     window.resizable(False,False)
     window.lift()
-    #window.resizable(False,False)             
-
+    # Set the initial direction of the snake to zero
     direction = "down"
+    # Display the score on the window
     label = Label(window, text="Score: {}".format(score), font=("times", 40), fg='RoyalBlue3')
     label.pack()
 
     paused = False
-    button = Button(window, text="New Game", fg='black', font=("times", 20), command=new_game, state="disabled", bg='red', activeforeground="black",bd=5, highlightbackground='black',relief='ridge')
+    # Create the New Game button on the Game Window
+    button = Button(window, text="New Game", fg='black', font=("gameplay", 20), command=new_game, state="disabled", bg='red', activeforeground="black",bd=5, highlightbackground='black',relief='ridge')
     button.pack()
-    
+    # Create a canvas for the snake game to be placed
     canvas = Canvas(window, bg=BACKGROUND_COLOUR, height=GAME_HEIGHT, width=GAME_WIDTH)
     canvas.pack(fill="both", expand=True)
-    #brick_image = PhotoImage(file='Brick_Wall.png')
     window.update()
     window_width = window.winfo_width()
     window_height = window.winfo_height()
     screen_width = window.winfo_screenwidth()
     screen_height = window.winfo_screenheight()
-
+    # Center the window on the screen
     x = int((screen_width / 2) - (window_width / 2))
     y = int((screen_height / 2) - (window_height / 2))
 
@@ -919,7 +1028,7 @@ def start_game():
     food = Food()
 
     next_turn(snake, food)
-
+# Create a function for the difficulty window
 def difficulty():
     global level
     # Create a new top-level window for selecting game difficulty
@@ -960,27 +1069,38 @@ def difficulty():
 home = Tk()
 # Create the title of the main window 
 home.title('Math Snake')
-# Create a snake image for the icon and to display on the window 
+# Load and set an image for the window icon
 snake_image5 = PhotoImage(file='Happy_Snake.png')
-# Create an icon 
 home.iconphoto(True, snake_image5)
+# Set the dimensions of the main window and disable resizing
 home.geometry('600x450')
 home.resizable(False,False)
+# Create a frame with a border and background colour 
 border_frame = Frame(home, bg='white', highlightbackground='blue', highlightcolor='blue', highlightthickness=5)
 border_frame.pack(fill="both", expand=True, padx=5)
+# Create a canvas to create and image on
 canvas1 = Canvas(border_frame, bg="#a1c5ff", width=800, height=800)
 canvas1.pack(fill="both", expand=True)
+# Add an image of the snake to the canvas at the specified coordinates
 canvas1.create_image(165, 10, image=snake_image5, anchor="nw")
 math_image = PhotoImage(file='maths_symbols.png')
+# Load and set an image of math symbols to the canvas at the specified coordinates
 canvas1.create_image(25,230, image=math_image, anchor="nw")
+# Create a button which will open a window to choose the difficulty level
 startgame_btn = Button(home, text='START GAME', bg="blue", fg="cyan2", font=('gameplay', 10), command=difficulty, bd=6, highlightbackground='black',activebackground="darkblue",activeforeground="cyan",relief="ridge")
+# Position the button at specified coordinates
 startgame_btn.place(x=50, y=50)
+# Create a label to display a welcome message
 welcome = Label(home, font='times 15 bold ', bg="#a1c5ff", fg="blue", text=('Welcome to Math Snake!'))
+# Position the label at specified coordinates
 welcome.place(x=25,y=10)
+# Create a button which will open a window displaying the rules
 rules_btn = Button(home, text='RULES', bg="blue", fg="cyan2", font=('gameplay', 10), command=rules, bd=6, highlightbackground='black',activebackground="darkblue",activeforeground="cyan",relief="ridge")
+# Position the label at specified coordinates
 rules_btn.place(x=50, y=100)
-
+# Create a button which will open a window displaying the controls
 controls_btn = Button(home, text='CONTROLS', bg="blue", fg="cyan2", font=('gameplay', 10), command=controls,bd=6, highlightbackground='black',activebackground="darkblue",activeforeground="cyan",relief="ridge")
+# Position the label at specifed coodinates
 controls_btn.place(x=50, y=150)
 home.mainloop()
 
